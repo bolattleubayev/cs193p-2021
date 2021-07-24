@@ -5,7 +5,7 @@
 //  Created by macbook on 10/07/2021.
 //
 
-import SwiftUI
+import SwiftUI 
 
 struct ContentView: View {
     @State var emojis = ["🚲", "🚂", "🚁", "🚜", "🚕", "🏎", "🚑", "🚓", "🚒", "✈️", "🚀", "⛵️", "🛸", "🛶", "🚌", "🏍", "🛺", "🚠", "🛵", "🚗", "🚚", "🚇", "🛻", "🚝"]
@@ -37,13 +37,6 @@ struct ContentView: View {
                 people
             }
             .font(.largeTitle)
-//            HStack {
-//                remove
-//                Spacer()
-//                add
-//            }
-//            .font(.largeTitle)
-//            .padding(.horizontal)
         }
         .padding(.horizontal)
         
@@ -90,26 +83,6 @@ struct ContentView: View {
                     .padding(.horizontal)
             }
             
-        }
-    }
-    
-    var remove: some View {
-        Button {
-            if emojiCount > 1 {
-                emojiCount -= 1
-            }
-        } label: {
-            Image(systemName: "minus.circle")
-        }
-    }
-    
-    var add: some View {
-        Button {
-            if emojiCount < emojis.count {
-                emojiCount += 1
-            }
-        } label: {
-            Image(systemName: "plus.circle")
         }
     }
 }
@@ -165,7 +138,9 @@ struct CardView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
-            .preferredColorScheme(.light)
+        Group {
+            ContentView()
+                .preferredColorScheme(.light)
+        }
     }
 }

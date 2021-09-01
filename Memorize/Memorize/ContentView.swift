@@ -16,10 +16,32 @@ struct ContentView: View {
         return CGFloat(sqrt((totalArea / Double(cardCount)) / 2.5))
     }
     
+    func convertStringToColor(word: String) -> Color {
+        switch word {
+        case "red":
+            return Color.red
+        case "blue":
+            return Color.blue
+        case "orange":
+            return Color.orange
+        case "yellow":
+            return Color.yellow
+        case "green":
+            return Color.green
+        case "black":
+            return Color.black
+        default:
+            return Color.gray
+        }
+    }
+    
     var body: some View {
         VStack {
-            Text("Memorize!")
+            Text(viewModel.randomTheme.name)
                 .font(.title)
+            
+            Text("score: \(viewModel.score)")
+                .font(.headline)
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: widthThatBestFits(cardCount: viewModel.cards.count)))]) {
                     ForEach(viewModel.cards) { card in
@@ -31,62 +53,17 @@ struct ContentView: View {
                     }
                 }
             }
-            .foregroundColor(.red)
+            .foregroundColor(convertStringToColor(word: viewModel.randomTheme.color))
             Spacer()
-//            HStack {
-//                vehicles
-//                animals
-//                people
-//            }
-//            .font(.largeTitle)
+            Button {
+                viewModel.newGame()
+            } label: {
+                Text("New game").font(.title)
+            }
         }
         .padding(.horizontal)
         
     }
-    
-//    var vehicles: some View {
-//        Button {
-//            emojis = ["🚲", "🚂", "🚁", "🚜", "🚕", "🏎", "🚑", "🚓", "🚒", "✈️", "🚀", "⛵️", "🛸", "🛶", "🚌", "🏍", "🛺", "🚠", "🛵", "🚗", "🚚", "🚇", "🛻", "🚝"].shuffled()
-//            emojiCount = Int.random(in: 4..<emojis.count)
-//        } label: {
-//            VStack {
-//                Image(systemName: "car")
-//                Text("Vehicles")
-//                    .font(.footnote)
-//                    .padding(.horizontal)
-//            }
-//
-//        }
-//    }
-//
-//    var animals: some View {
-//        Button {
-//            emojis = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵", "🐔", "🐧", "🐦", "🐤", "🐥", "🦄", "🐴", "🐺"].shuffled()
-//            emojiCount = Int.random(in: 4..<emojis.count)
-//        } label: {
-//            VStack {
-//                Image(systemName: "hare")
-//                Text("Animals")
-//                    .font(.footnote)
-//                    .padding(.horizontal)
-//            }
-//        }
-//    }
-//
-//    var people: some View {
-//        Button {
-//            emojis = ["😁", "😂", "😅", "😍", "👨🏻‍⚕️", "👩🏻‍🎤", "👨🏻‍🎓", "🧚🏻‍♀️", "🧛🏻‍♂️", "🧞‍♀️", "🧜🏻‍♀️", "👨🏻‍🚀", "👨🏻‍🚒", "👰🏻‍♀️", "😡", "🥶", "😱", "🤥", "😇", "😜", "😎", "🙄", "🤢", "🤠"].shuffled()
-//            emojiCount = Int.random(in: 4..<emojis.count)
-//        } label: {
-//            VStack {
-//                Image(systemName: "person")
-//                Text("People")
-//                    .font(.footnote)
-//                    .padding(.horizontal)
-//            }
-//
-//        }
-//    }
 }
 
 struct CardView: View {
@@ -140,8 +117,8 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let game = EmojiMemoryGame()
         Group {
-            ContentView(viewModel: game)
-                .preferredColorScheme(.dark)
+//            ContentView(viewModel: game)
+//                .preferredColorScheme(.dark)
             ContentView(viewModel: game)
                 .preferredColorScheme(.light)
         }

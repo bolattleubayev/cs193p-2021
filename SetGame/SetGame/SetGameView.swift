@@ -13,15 +13,23 @@ struct SetGameView: View {
     var body: some View {
         VStack {
             AspectVGrid(items: game.cards, aspectRatio: 2/3) { card in
-                if card.isSet && !card.isFaceUp {
-                    Rectangle().opacity(0)
-                } else {
-                    CardView(card: card)
-                        .padding(4)
-                        .onTapGesture {
-                            game.choose(card)
-                        }.foregroundColor(.green)
-                }
+                
+                CardView(card: card)
+                    .padding(4)
+                    .onTapGesture {
+                        game.choose(card)
+                    }.foregroundColor(.green)
+                
+            }
+            Button {
+                game.dealThreeMore()
+            } label: {
+                Text("Deal 3 more cards").font(.title)
+            }
+            Button {
+                game.newGame()
+            } label: {
+                Text("New game").font(.title)
             }
         }
         .padding(.horizontal)
@@ -35,7 +43,7 @@ struct CardView: View {
         GeometryReader { geometry in
             ZStack {
                 let shape = RoundedRectangle(cornerRadius: DrawingConstants.cornerRadius)
-                if card.isFaceUp {
+                if card.inGame {
                     shape.fill().foregroundColor(.white)
                     shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
                     CardFace(card: card)

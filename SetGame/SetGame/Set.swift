@@ -8,11 +8,12 @@
 import Foundation
 
 struct Set {
-    private(set) var cards: Array<Card>
+    private var cards: Array<Card>
+    private var cardsInGame = 12
     
     private var indexOfTheOneAndOnlyFaceUpCard: Int? {
-        get { cards.indices.filter({ cards[$0].isFaceUp }).oneAndOnly }
-        set { cards.indices.forEach { cards[$0].isFaceUp = ($0 == newValue) } }
+        get { cards.indices.filter({ cards[$0].inGame }).oneAndOnly }
+        set { cards.indices.forEach { cards[$0].inGame = ($0 == newValue) } }
     }
     
     init() {
@@ -36,11 +37,12 @@ struct Set {
         }
         
         cards = cards.shuffled()
+        addCardsToGame()
     }
     
     mutating func choose(_ card: Card) {
         if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }),
-           !cards[chosenIndex].isFaceUp,
+//           !cards[chosenIndex].isFaceUp,
            !cards[chosenIndex].isSet
         {
             if let potentialMatchIndex = indexOfTheOneAndOnlyFaceUpCard {
@@ -51,15 +53,33 @@ struct Set {
 //                    cards[chosenIndex].isSeen = true
 //                    cards[potentialMatchIndex].isSeen = true
 //                }
-                cards[chosenIndex].isFaceUp = true
+//                cards[chosenIndex].isFaceUp = true
             } else {
                 indexOfTheOneAndOnlyFaceUpCard = chosenIndex
             }
         }
     }
     
+    mutating func dealThreeMore() {
+        cardsInGame += 3
+        addCardsToGame()
+    }
+    
+    mutating func addCardsToGame() {
+        for index in 0..<cards.count {
+            if index < cardsInGame {
+                cards[index].inGame = true
+            } else {
+                break
+            }
+        }
+    }
+    
+    func getCardsInGame() -> Array<Card> {
+        cards.filter( { $0.inGame } )
+    }
+    
     struct Card: Identifiable {
-        var isFaceUp = false
         var isSet = false
         let numberOfShapes: CardNumberOfShapes
         let shape: CardShape
@@ -67,6 +87,8 @@ struct Set {
         let color: CardColor
         let id: Int
         var isSeen = false
+        var inGame = false
+        var isSelected = false
     }
     
     enum CardNumberOfShapes: Int, CaseIterable {

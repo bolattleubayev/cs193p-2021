@@ -23,6 +23,7 @@ struct Diamond: Shape {
         p.addLine(to: CGPoint(x: center.x, y: center.y + height / 2))
         p.addLine(to: CGPoint(x: center.x - width / 2, y: center.y))
         p.addLine(to: CGPoint(x: center.x, y: center.y - height / 2))
+        p.addLine(to: CGPoint(x: center.x + width / 2, y: center.y))
         
         return p
     }

@@ -8,13 +8,11 @@
 import SwiftUI
 
 struct CardFace: View {
-    let card: Set.Card
     let color: Color
-    let numberOfShapes: Int
+    let numberOfShapes: ClosedRange<Int>
+    let shape: Set.CardShape
     
     init(card: Set.Card) {
-        self.card = card
-        
         switch card.color {
         case .red:
             color = Color.red
@@ -24,24 +22,28 @@ struct CardFace: View {
             color = Color.green
         }
         
-        numberOfShapes = card.numberOfShapes.rawValue
-        
+        numberOfShapes = 1...card.numberOfShapes.rawValue
+        shape = card.shape
     }
     
     var body: some View {
         GeometryReader { geometry in
-            VStack {
-                
-                
-                switch card.numberOfShapes {
-                case .one:
-                    Text("*")
-                case .two:
-                    Text("**")
-                case .three:
-                    Text("***")
+            VStack(alignment: .center) {
+                ForEach(numberOfShapes, id: \.self) { shapeNumber in
+                    switch shape {
+                    case .diamond:
+                        Diamond(width: geometry.size.width, height: geometry.size.height / CGFloat(numberOfShapes.last ?? 1))
+                    case .squiggle:
+                        Rectangle().aspectRatio(2, contentMode: .fit)
+                    case .oval:
+                        Ellipse().aspectRatio(2, contentMode: .fit)
+                    }
+                    
                 }
-            }.foregroundColor(color)
+                Spacer()
+            }
+            .foregroundColor(color)
+            
         }
     }
     

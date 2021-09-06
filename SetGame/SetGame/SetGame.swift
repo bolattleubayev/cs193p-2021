@@ -21,12 +21,20 @@ class SetGame: ObservableObject {
     @Published private var model: Set
     
     var cards: Array<Card> {
-        model.cards
+        model.getCardsInGame()
     }
     
     // MARK: - Intent(s)
     
     func choose(_ card: Card) {
         model.choose(card)
+    }
+    
+    func dealThreeMore() {
+        model.dealThreeMore()
+    }
+    
+    func newGame() {
+        model = SetGame.createMemoryGame()
     }
 }

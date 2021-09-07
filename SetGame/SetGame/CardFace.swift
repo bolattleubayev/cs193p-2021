@@ -7,10 +7,12 @@
 
 import SwiftUI
 
-struct CardFace: View {
-    let color: Color
+struct CardFace<ItemView>: View where ItemView: Shape {
+    var color: Color
+    let shape: ItemView
     let numberOfShapes: ClosedRange<Int>
-    let shape: Set.CardShape
+    let shapeType: Set.CardShape
+    let shading: Set.CardShading
     
     init(card: Set.Card) {
         switch card.color {
@@ -22,26 +24,39 @@ struct CardFace: View {
             color = Color.green
         }
         
+        switch card.shape {
+        case .diamond:
+            shape = Diamond() as! ItemView
+        case .squiggle:
+            shape = Rectangle() as! ItemView
+        case .oval:
+            shape = Ellipse() as! ItemView
+        }
+        
+        if (card.shading == .striped) {
+            color = color.opacity(0.6)
+        }
+        
         numberOfShapes = 1...card.numberOfShapes.rawValue
-        shape = card.shape
+        shapeType = card.shape
+        shading = card.shading
     }
     
     var body: some View {
         GeometryReader { geometry in
             VStack(alignment: .center) {
                 ForEach(numberOfShapes, id: \.self) { shapeNumber in
-                    switch shape {
-                    case .diamond:
-                        Diamond(width: geometry.size.width, height: geometry.size.height / CGFloat(numberOfShapes.last ?? 1))
-                    case .squiggle:
-                        Rectangle().aspectRatio(2, contentMode: .fit)
-                    case .oval:
-                        Ellipse().aspectRatio(2, contentMode: .fit)
+                    if (shading == .open) {
+                        shape
+                            .stroke(lineWidth: 2.0)
+                            .aspectRatio(2, contentMode: .fit)
+                    } else {
+                        shape.aspectRatio(2, contentMode: .fit)
                     }
-                    
                 }
                 Spacer()
             }
+            .padding()
             .foregroundColor(color)
             
         }

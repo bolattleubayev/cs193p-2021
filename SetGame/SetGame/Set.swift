@@ -76,7 +76,7 @@ struct Set {
     }
     
     func getCardsInGame() -> Array<Card> {
-        cards.filter( { $0.inGame } )
+        cards.filter( { $0.inGame && !$0.isSet} )
     }
     
     struct Card: Identifiable {

@@ -46,7 +46,17 @@ struct CardView: View {
                 if card.inGame {
                     shape.fill().foregroundColor(.white)
                     shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
-                    CardFace(card: card)
+                    
+                    switch card.shape {
+                    case .diamond:
+                        CardFace<Diamond>(card: card)
+                    case .squiggle:
+                        CardFace<Rectangle>(card: card)
+                    case .oval:
+                        CardFace<Ellipse>(card: card)
+                    }
+                    
+                    
                 } else if card.isSet {
                     shape.opacity(0)
                 } else {

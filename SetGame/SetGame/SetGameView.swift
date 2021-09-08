@@ -13,7 +13,6 @@ struct SetGameView: View {
     var body: some View {
         VStack {
             AspectVGrid(items: game.cards, aspectRatio: 2/3) { card in
-                
                 CardView(card: card)
                     .padding(4)
                     .onTapGesture {
@@ -44,9 +43,14 @@ struct CardView: View {
             ZStack {
                 let shape = RoundedRectangle(cornerRadius: DrawingConstants.cornerRadius)
                 if card.inGame {
-                    shape.fill().foregroundColor(.white)
-                    shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
-                    
+                    if !card.isSelected {
+                        shape.fill().foregroundColor(.white)
+                        shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
+                    } else {
+                        shape.fill().foregroundColor(.white)
+                        shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
+                        shape.foregroundColor(.orange)
+                    }
                     switch card.shape {
                     case .diamond:
                         CardFace<Diamond>(card: card)
@@ -55,7 +59,6 @@ struct CardView: View {
                     case .oval:
                         CardFace<Ellipse>(card: card)
                     }
-                    
                     
                 } else if card.isSet {
                     shape.opacity(0)

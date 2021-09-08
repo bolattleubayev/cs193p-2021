@@ -9,7 +9,7 @@ import Foundation
 
 struct Set {
     private var cards: Array<Card>
-    private var cardsInGame = 12
+    private(set) var cardsInGame = 12
     
     private var indexOfTheFirstSelectedCard: Int?
     private var indexOfTheSecondSelectedCard: Int?
@@ -55,32 +55,50 @@ struct Set {
             
             if let potentialMatchIndexOne = indexOfTheFirstSelectedCard, let potentialMatchIndexTwo = indexOfTheSecondSelectedCard {
                 // if the third card was selected
-                
-                let cardsToCheck = [cards[potentialMatchIndexOne],
-                                cards[potentialMatchIndexTwo],
-                                cards[chosenIndex]
-                ]
-                
-                if isSet(cards: cardsToCheck) {
-                    cards[potentialMatchIndexOne].isSet = true
-                    cards[potentialMatchIndexTwo].isSet = true
-                    cards[chosenIndex].isSet = true
+                if let secondCard = indexOfTheSecondSelectedCard, secondCard == chosenIndex {
+                    cards[secondCard].isSelected = false
+                    indexOfTheSecondSelectedCard = nil
+                } else {
+                    let cardsToCheck = [cards[potentialMatchIndexOne],
+                                    cards[potentialMatchIndexTwo],
+                                    cards[chosenIndex]
+                    ]
                     
-                    cards[potentialMatchIndexOne].inGame = false
-                    cards[potentialMatchIndexTwo].inGame = false
-                    cards[chosenIndex].inGame = false
+                    if isSet(cards: cardsToCheck) {
+                        cards[potentialMatchIndexOne].isSet = true
+                        cards[potentialMatchIndexTwo].isSet = true
+                        cards[chosenIndex].isSet = true
+                        
+                        if cardsInGame >= 81 {
+                            
+                            cards[potentialMatchIndexOne].inGame = false
+                            cards[potentialMatchIndexTwo].inGame = false
+                            cards[chosenIndex].inGame = false
+                        }
+                    } else {
+                        cards[potentialMatchIndexOne].notSet = true
+                        cards[potentialMatchIndexTwo].notSet = true
+                        cards[chosenIndex].notSet = true
+                    }
+                    
+                    cards[chosenIndex].isSelected = true
+                    
+                    indexOfTheFirstSelectedCard = nil
+                    indexOfTheSecondSelectedCard = nil
                 }
-                
-                cards.indices.forEach({ cards[$0].isSelected = false })
-                indexOfTheFirstSelectedCard = nil
-                indexOfTheSecondSelectedCard = nil
-                
             } else if indexOfTheFirstSelectedCard != nil && indexOfTheSecondSelectedCard == nil {
                 // if one card is selected
-                indexOfTheSecondSelectedCard = chosenIndex
-                cards[chosenIndex].isSelected = true
+                if let firstCard = indexOfTheFirstSelectedCard, firstCard == chosenIndex {
+                    cards[firstCard].isSelected = false
+                    indexOfTheFirstSelectedCard = nil
+                } else {
+                    indexOfTheSecondSelectedCard = chosenIndex
+                    cards[chosenIndex].isSelected = true
+                }
             } else {
                 // if no cards were selected
+                cards.indices.forEach({ cards[$0].isSelected = false })
+                cards.indices.forEach({ cards[$0].notSet = false })
                 indexOfTheFirstSelectedCard = chosenIndex
                 cards[chosenIndex].isSelected = true
             }
@@ -96,21 +114,26 @@ struct Set {
     mutating func addCardsToGame() {
         for index in 0..<cards.count {
             if index < cardsInGame {
-                cards[index].inGame = true
+                if cards[index].isSet {
+                    cards[index].inGame = false
+                } else {
+                    cards[index].inGame = true
+                }
             } else {
                 break
             }
         }
     }
     
-    func getCardsInGame() -> Array<Card> {
-        cards.filter( { $0.inGame && !$0.isSet} )
+    func getCards() -> Array<Card> {
+        cards.filter( { $0.inGame } )
     }
     
     struct Card: Identifiable {
         let id: Int
         
         var isSet = false
+        var notSet = false // to show that the set was done wrong
         var inGame = false
         var isSelected = false
         

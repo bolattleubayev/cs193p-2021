@@ -21,7 +21,11 @@ class SetGame: ObservableObject {
     @Published private var model: Set
     
     var cards: Array<Card> {
-        model.getCardsInGame()
+        model.getCards()
+    }
+    
+    var cardsInGame: Int {
+        model.cardsInGame
     }
     
     // MARK: - Intent(s)

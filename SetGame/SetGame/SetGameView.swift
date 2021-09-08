@@ -17,14 +17,13 @@ struct SetGameView: View {
                     .padding(4)
                     .onTapGesture {
                         game.choose(card)
-                    }.foregroundColor(.green)
-                
+                    }.foregroundColor(.blue)
             }
             Button {
                 game.dealThreeMore()
             } label: {
                 Text("Deal 3 more cards").font(.title)
-            }
+            }.disabled(game.cardsInGame >= 81)
             Button {
                 game.newGame()
             } label: {
@@ -47,10 +46,20 @@ struct CardView: View {
                         shape.fill().foregroundColor(.white)
                         shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
                     } else {
-                        shape.fill().foregroundColor(.white)
+                        shape.fill().foregroundColor(.gray)
                         shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
-                        shape.foregroundColor(.orange)
                     }
+                    
+                    if card.isSet {
+                        shape.fill().foregroundColor(.orange)
+                        shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
+                    }
+                    
+                    if card.notSet {
+                        shape.fill().foregroundColor(.yellow)
+                        shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
+                    }
+                    
                     switch card.shape {
                     case .diamond:
                         CardFace<Diamond>(card: card)

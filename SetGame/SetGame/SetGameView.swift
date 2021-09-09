@@ -36,7 +36,9 @@ struct SetGameView: View {
                     .matchedGeometryEffect(id: card.id, in: undealingNamespace)
                     .padding(4)
                     .onTapGesture {
-                        game.choose(card)
+                        withAnimation {
+                            game.choose(card)
+                        }
                     }.foregroundColor(.blue)
             }
         }

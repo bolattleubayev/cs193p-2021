@@ -49,11 +49,6 @@ class EmojiMemoryGame: ObservableObject {
         }
     }
     
-    func newGame() {
-        randomTheme =  EmojiMemoryGame.themes[Int.random(in: 0..<EmojiMemoryGame.themes.count)]
-        model = EmojiMemoryGame.createMemoryGame(randomTheme)
-    }
-    
     @Published private var model: MemoryGame<String>
     
     var cards: Array<Card> {
@@ -68,5 +63,14 @@ class EmojiMemoryGame: ObservableObject {
     
     func choose(_ card: Card) {
         model.choose(card)
+    }
+    
+    func shuffle() {
+        model.shuffle()
+    }
+    
+    func restart() {
+        randomTheme =  EmojiMemoryGame.themes[Int.random(in: 0..<EmojiMemoryGame.themes.count)]
+        model = EmojiMemoryGame.createMemoryGame(randomTheme)
     }
 }

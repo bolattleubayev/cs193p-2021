@@ -11,18 +11,19 @@ struct SetGameView: View {
     @ObservedObject var game: SetGame
     
     @Namespace private var dealingNamespace
+    @Namespace private var undealingNamespace
     
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack{
                 gameBody
-                HStack {
-                    restart
-                    Spacer()
-                }
-                .padding(.horizontal)
             }
-            deckBody
+            HStack {
+                startDeckBody
+                Spacer()
+                discardedDeckBody
+            }
+            restart
         }
         .padding()
     }
@@ -32,8 +33,8 @@ struct SetGameView: View {
             if !isUndealt(card) {
                 CardView(card: card)
                     .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                    .matchedGeometryEffect(id: card.id, in: undealingNamespace)
                     .padding(4)
-                    .transition(AnyTransition.asymmetric(insertion: .identity, removal: .scale))
                     .onTapGesture {
                         game.choose(card)
                     }.foregroundColor(.blue)
@@ -41,12 +42,23 @@ struct SetGameView: View {
         }
     }
     
-    var deckBody: some View {
+    var discardedDeckBody: some View {
+        ZStack {
+            ForEach(game.cards.filter({ !$0.inGame && !isUndealt($0) })) { card in
+                CardView(card: card)
+                    .matchedGeometryEffect(id: card.id, in: undealingNamespace)
+                    .zIndex(zIndex(of: card))
+            }
+        }
+        .frame(width: CardConstants.undealtWidth, height: CardConstants.undealtHeight)
+        .foregroundColor(.blue)
+    }
+    
+    var startDeckBody: some View {
         ZStack {
             ForEach(game.cards.filter(isUndealt)) { card in
                 CardView(card: card)
                     .matchedGeometryEffect(id: card.id, in: dealingNamespace)
-                    .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .identity))
                     .zIndex(zIndex(of: card))
             }
         }
@@ -54,9 +66,9 @@ struct SetGameView: View {
         .foregroundColor(.blue)
         .onTapGesture {
             // "deal" cards
-            game.dealThreeMore()
-            for card in game.cards.filter({ $0.inGame }) {
-                withAnimation(dealAnimation(for: card)) {
+            withAnimation {
+                game.dealThreeMore()
+                for card in game.cards.filter({ $0.inGame }) {
                     deal(card)
                 }
             }
@@ -70,15 +82,6 @@ struct SetGameView: View {
                 game.restart()
             }
         }
-    }
-    
-    var dealThreeMore: some View {
-        Button("Deal") {
-            withAnimation {
-                game.dealThreeMore()
-            }
-        }
-        .disabled(game.cardsInGame >= 81)
     }
     
     @State private var dealt = Set<Int>()
@@ -148,8 +151,6 @@ struct CardView: View {
                         CardFace<Ellipse>(card: card)
                     }
                     
-                } else if card.isSet {
-                    shape.opacity(0)
                 } else {
                     shape.fill()
                 }

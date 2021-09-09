@@ -8,17 +8,17 @@
 import SwiftUI
 
 class SetGame: ObservableObject {
-    typealias Card = Set.Card
+    typealias Card = SetModel.Card
     
     init() {
         model = SetGame.createMemoryGame()
     }
     
-    private static func createMemoryGame() -> Set {
-        return Set()
+    private static func createMemoryGame() -> SetModel {
+        return SetModel()
     }
     
-    @Published private var model: Set
+    @Published private var model: SetModel
     
     var cards: Array<Card> {
         model.getCards()
@@ -38,7 +38,7 @@ class SetGame: ObservableObject {
         model.dealThreeMore()
     }
     
-    func newGame() {
+    func restart() {
         model = SetGame.createMemoryGame()
     }
 }

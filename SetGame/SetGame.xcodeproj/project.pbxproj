@@ -12,7 +12,7 @@
 		FA9C795626E179F200E78CD2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA9C795526E179F200E78CD2 /* Assets.xcassets */; };
 		FA9C795926E179F200E78CD2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA9C795826E179F200E78CD2 /* Preview Assets.xcassets */; };
 		FA9C796126E1A15500E78CD2 /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9C796026E1A15500E78CD2 /* SetGame.swift */; };
-		FA9C796326E1A19400E78CD2 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9C796226E1A19400E78CD2 /* Set.swift */; };
+		FA9C796326E1A19400E78CD2 /* SetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9C796226E1A19400E78CD2 /* SetModel.swift */; };
 		FA9C796526E1A22600E78CD2 /* AspectVGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9C796426E1A22600E78CD2 /* AspectVGrid.swift */; };
 		FA9C796726E259D300E78CD2 /* CardFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9C796626E259D300E78CD2 /* CardFace.swift */; };
 		FA9C796926E25D4500E78CD2 /* Diamond.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9C796826E25D4500E78CD2 /* Diamond.swift */; };
@@ -26,7 +26,7 @@
 		FA9C795826E179F200E78CD2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		FA9C795A26E179F200E78CD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA9C796026E1A15500E78CD2 /* SetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
-		FA9C796226E1A19400E78CD2 /* Set.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
+		FA9C796226E1A19400E78CD2 /* SetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetModel.swift; sourceTree = "<group>"; };
 		FA9C796426E1A22600E78CD2 /* AspectVGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectVGrid.swift; sourceTree = "<group>"; };
 		FA9C796626E259D300E78CD2 /* CardFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardFace.swift; sourceTree = "<group>"; };
 		FA9C796826E25D4500E78CD2 /* Diamond.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diamond.swift; sourceTree = "<group>"; };
@@ -68,7 +68,7 @@
 				FA9C796626E259D300E78CD2 /* CardFace.swift */,
 				FA9C796826E25D4500E78CD2 /* Diamond.swift */,
 				FA9C796026E1A15500E78CD2 /* SetGame.swift */,
-				FA9C796226E1A19400E78CD2 /* Set.swift */,
+				FA9C796226E1A19400E78CD2 /* SetModel.swift */,
 				FA9C795526E179F200E78CD2 /* Assets.xcassets */,
 				FA9C795A26E179F200E78CD2 /* Info.plist */,
 				FA9C795726E179F200E78CD2 /* Preview Content */,
@@ -153,7 +153,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA9C796326E1A19400E78CD2 /* Set.swift in Sources */,
+				FA9C796326E1A19400E78CD2 /* SetModel.swift in Sources */,
 				FA9C795426E179EE00E78CD2 /* SetGameView.swift in Sources */,
 				FA9C796726E259D300E78CD2 /* CardFace.swift in Sources */,
 				FA9C796926E25D4500E78CD2 /* Diamond.swift in Sources */,

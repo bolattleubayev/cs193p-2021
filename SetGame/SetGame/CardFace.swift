@@ -11,10 +11,10 @@ struct CardFace<ItemView>: View where ItemView: Shape {
     var color: Color
     let shape: ItemView
     let numberOfShapes: ClosedRange<Int>
-    let shapeType: Set.CardShape
-    let shading: Set.CardShading
+    let shapeType: SetModel.CardShape
+    let shading: SetModel.CardShading
     
-    init(card: Set.Card) {
+    init(card: SetModel.Card) {
         switch card.color {
         case .red:
             color = Color.red

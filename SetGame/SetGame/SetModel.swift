@@ -1,5 +1,5 @@
 //
-//  Set.swift
+//  SetModel.swift
 //  SetGame
 //
 //  Created by macbook on 03/09/2021.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Set {
+struct SetModel {
     private var cards: Array<Card>
     private(set) var cardsInGame = 12
     
@@ -69,12 +69,10 @@ struct Set {
                         cards[potentialMatchIndexTwo].isSet = true
                         cards[chosenIndex].isSet = true
                         
-                        if cardsInGame >= 81 {
-                            
-                            cards[potentialMatchIndexOne].inGame = false
-                            cards[potentialMatchIndexTwo].inGame = false
-                            cards[chosenIndex].inGame = false
-                        }
+                        cards[potentialMatchIndexOne].inGame = false
+                        cards[potentialMatchIndexTwo].inGame = false
+                        cards[chosenIndex].inGame = false
+                        
                     } else {
                         cards[potentialMatchIndexOne].notSet = true
                         cards[potentialMatchIndexTwo].notSet = true
@@ -126,7 +124,8 @@ struct Set {
     }
     
     func getCards() -> Array<Card> {
-        cards.filter( { $0.inGame } )
+//        cards.filter( { $0.inGame } )
+        cards
     }
     
     struct Card: Identifiable {

@@ -124,6 +124,14 @@ struct SetGameView: View {
 struct CardView: View {
     let card: SetGame.Card
     
+    @State var size: CGFloat = 1.0
+        
+    var repeatingAnimation: Animation {
+        Animation
+            .easeInOut(duration: 2) //.easeIn, .easyOut, .linear, etc...
+            .repeatForever()
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -138,7 +146,6 @@ struct CardView: View {
                        
                         shape.fill().foregroundColor(.gray)
                         shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
-                        
                     }
                     
                     if card.isSet {
@@ -164,6 +171,8 @@ struct CardView: View {
                     shape.fill()
                 }
             }
+            .scaleEffect(card.isSet ? 1.1 : 1.0)
+            .scaleEffect(card.notSet ? 0.9 : 1.0)
         }
     }
     

@@ -50,6 +50,13 @@ struct SetModel {
     }
     
     mutating func choose(_ card: Card) {
+        
+        for cardThatWasSetIndex in cards.indices {
+            if cards[cardThatWasSetIndex].isSet {
+                cards[cardThatWasSetIndex].inGame = false
+            }
+        }
+        
         if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }),
            cards[chosenIndex].inGame && !cards[chosenIndex].isSet {
             
@@ -68,11 +75,6 @@ struct SetModel {
                         cards[potentialMatchIndexOne].isSet = true
                         cards[potentialMatchIndexTwo].isSet = true
                         cards[chosenIndex].isSet = true
-                        
-                        cards[potentialMatchIndexOne].inGame = false
-                        cards[potentialMatchIndexTwo].inGame = false
-                        cards[chosenIndex].inGame = false
-                        
                     } else {
                         cards[potentialMatchIndexOne].notSet = true
                         cards[potentialMatchIndexTwo].notSet = true
@@ -124,7 +126,6 @@ struct SetModel {
     }
     
     func getCards() -> Array<Card> {
-//        cards.filter( { $0.inGame } )
         cards
     }
     

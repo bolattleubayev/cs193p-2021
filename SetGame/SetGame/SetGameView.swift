@@ -14,8 +14,8 @@ struct SetGameView: View {
     @Namespace private var undealingNamespace
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            VStack{
+        VStack {
+            VStack {
                 gameBody
             }
             HStack {
@@ -29,18 +29,17 @@ struct SetGameView: View {
     }
     
     var gameBody: some View {
-        AspectVGrid(items: game.cards.filter({ $0.inGame }), aspectRatio: 2/3) { card in
-            if !isUndealt(card) {
-                CardView(card: card)
-                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
-                    .matchedGeometryEffect(id: card.id, in: undealingNamespace)
-                    .padding(4)
-                    .onTapGesture {
-                        withAnimation {
-                            game.choose(card)
-                        }
-                    }.foregroundColor(.blue)
-            }
+        AspectVGrid(items: game.cards.filter({ $0.inGame && !isUndealt($0) }), aspectRatio: 2/3) { card in
+            CardView(card: card)
+                .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                .matchedGeometryEffect(id: card.id, in: undealingNamespace)
+                .padding(4)
+                .onTapGesture {
+                    withAnimation {
+                        game.choose(card)
+                    }
+                }.foregroundColor(.blue)
+            
         }
     }
     
@@ -58,7 +57,7 @@ struct SetGameView: View {
     
     var startDeckBody: some View {
         ZStack {
-            ForEach(game.cards.filter(isUndealt)) { card in
+            ForEach(game.cards.filter({ !$0.inGame && isUndealt($0) })) { card in
                 CardView(card: card)
                     .matchedGeometryEffect(id: card.id, in: dealingNamespace)
                     .zIndex(zIndex(of: card))
@@ -69,7 +68,11 @@ struct SetGameView: View {
         .onTapGesture {
             // "deal" cards
             withAnimation {
-                game.dealThreeMore()
+                
+                if dealt != [] {
+                    game.dealThreeMore()
+                }
+                
                 for card in game.cards.filter({ $0.inGame }) {
                     deal(card)
                 }
@@ -125,13 +128,17 @@ struct CardView: View {
         GeometryReader { geometry in
             ZStack {
                 let shape = RoundedRectangle(cornerRadius: DrawingConstants.cornerRadius)
-                if card.inGame {
+                
+                if card.inGame || (!card.inGame && card.isSet){
+                    
                     if !card.isSelected {
                         shape.fill().foregroundColor(.white)
                         shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
                     } else {
+                       
                         shape.fill().foregroundColor(.gray)
                         shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
+                        
                     }
                     
                     if card.isSet {

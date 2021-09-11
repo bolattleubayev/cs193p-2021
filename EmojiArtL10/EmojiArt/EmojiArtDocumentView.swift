@@ -39,7 +39,7 @@ struct EmojiArtDocumentView: View {
                             .font(.system(size: fontSize(for: emoji)))
                             .scaleEffect(zoomScale)
                             .position(position(for: emoji, in: geometry))
-                            .gesture(removeEmojiGesture(emoji: emoji).exclusively(before: selectionGesture(emoji: emoji)))
+                            .gesture(panEmojiGesture().simultaneously(with: removeEmojiGesture(emoji: emoji).exclusively(before: selectionGesture(emoji: emoji))))
                     }
                 }
             }
@@ -95,6 +95,25 @@ struct EmojiArtDocumentView: View {
             document.resizeEmoji(emoji, by: -10)
         }
         selectedEmojis = []
+    }
+    
+    // MARK: - Move selected emojis
+    
+    @State private var steadyStatePanEmojiOffset: CGSize = CGSize.zero
+    @GestureState private var gesturePanEmojiOffset: CGSize = CGSize.zero
+    
+    private func panEmojiGesture() -> some Gesture {
+        DragGesture()
+            .updating($gesturePanEmojiOffset) { latestDragGestureValue, gesturePanEmojiOffset, _ in
+                for emoji in document.emojis.filter({ emojiIsSelected($0) }) {
+                    document.moveEmoji(emoji, by: latestDragGestureValue.translation / zoomScale)
+                }
+            }
+            .onEnded { finalDragGestureValue in
+                for emoji in document.emojis.filter({ emojiIsSelected($0) }) {
+                    document.moveEmoji(emoji, by: steadyStatePanEmojiOffset + (finalDragGestureValue.translation / zoomScale))
+                }
+            }
     }
     
     // MARK: - Delete emoji
@@ -176,10 +195,26 @@ struct EmojiArtDocumentView: View {
     private func zoomGesture() -> some Gesture {
         MagnificationGesture()
             .updating($gestureZoomScale) { latestGestureScale, gestureZoomScale, _ in
-                gestureZoomScale = latestGestureScale
+                if selectedEmojis.isEmpty {
+                    gestureZoomScale = latestGestureScale
+                } else {
+                    document.emojis.forEach { emoji in
+                        if selectedEmojis.contains(emoji.id) {
+                            document.scaleEmoji(emoji, by: latestGestureScale)
+                        }
+                    }
+                }
             }
             .onEnded { gestureScaleAtEnd in
-                steadyStateZoomScale *= gestureScaleAtEnd
+                if selectedEmojis.isEmpty {
+                    steadyStateZoomScale *= gestureScaleAtEnd
+                } else {
+                    document.emojis.forEach { emoji in
+                        if selectedEmojis.contains(emoji.id) {
+                            document.scaleEmoji(emoji, by: gestureScaleAtEnd)
+                        }
+                    }
+                }
             }
     }
     
@@ -213,10 +248,14 @@ struct EmojiArtDocumentView: View {
     private func panGesture() -> some Gesture {
         DragGesture()
             .updating($gesturePanOffset) { latestDragGestureValue, gesturePanOffset, _ in
-                gesturePanOffset = latestDragGestureValue.translation / zoomScale
+                if selectedEmojis.isEmpty {
+                    gesturePanOffset = latestDragGestureValue.translation / zoomScale
+                }
             }
             .onEnded { finalDragGestureValue in
-                steadyStatePanOffset = steadyStatePanOffset + (finalDragGestureValue.translation / zoomScale)
+                if selectedEmojis.isEmpty {
+                    steadyStatePanOffset = steadyStatePanOffset + (finalDragGestureValue.translation / zoomScale)
+                }
             }
     }
 

@@ -45,16 +45,16 @@ class EmojiArtDocument: ObservableObject
     }
     
     private func save(to url: URL) {
-        let thisfunction = "\(String(describing: self)).\(#function)"
+//        let thisfunction = "\(String(describing: self)).\(#function)"
         do {
             let data: Data = try emojiArt.json()
-            print("\(thisfunction) json = \(String(data: data, encoding: .utf8) ?? "nil")")
+//            print("\(thisfunction) json = \(String(data: data, encoding: .utf8) ?? "nil")")
             try data.write(to: url)
-            print("\(thisfunction) success!")
+//            print("\(thisfunction) success!")
         } catch let encodingError where encodingError is EncodingError {
-            print("\(thisfunction) couldn't encode EmojiArt as JSON because \(encodingError.localizedDescription)")
+//            print("\(thisfunction) couldn't encode EmojiArt as JSON because \(encodingError.localizedDescription)")
         } catch {
-            print("\(thisfunction) error = \(error)")
+//            print("\(thisfunction) error = \(error)")
         }
     }
     
@@ -77,9 +77,10 @@ class EmojiArtDocument: ObservableObject
     @Published var backgroundImage: UIImage?
     @Published var backgroundImageFetchStatus = BackgroundImageFetchStatus.idle
     
-    enum BackgroundImageFetchStatus {
+    enum BackgroundImageFetchStatus: Equatable {
         case idle
         case fetching
+        case failed(URL)
     }
     
     private func fetchBackgroundImageDataIfNecessary() {
@@ -95,6 +96,9 @@ class EmojiArtDocument: ObservableObject
                         self?.backgroundImageFetchStatus = .idle
                         if imageData != nil {
                             self?.backgroundImage = UIImage(data: imageData!)
+                        }
+                        if self?.backgroundImage == nil {
+                            self?.backgroundImageFetchStatus = .failed(url)
                         }
                     }
                 }

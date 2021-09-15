@@ -49,7 +49,7 @@ struct EmojiMemoryGameView: View {
     
     var gameTexts: some View {
         VStack {
-            Text(game.randomTheme.name)
+            Text(game.theme.name)
                 .font(.title)
             Text("score: \(game.score)")
                 .font(.headline)
@@ -77,7 +77,7 @@ struct EmojiMemoryGameView: View {
                     }
             }
         }
-        .foregroundColor(convertStringToColor(word: game.randomTheme.color))
+        .foregroundColor(convertStringToColor(word: game.theme.color))
     }
     
     var deckBody: some View {
@@ -90,7 +90,7 @@ struct EmojiMemoryGameView: View {
             }
         }
         .frame(width: CardConstants.undealtWidth, height: CardConstants.undealtHeight)
-        .foregroundColor(convertStringToColor(word: game.randomTheme.color))
+        .foregroundColor(convertStringToColor(word: game.theme.color))
         .onTapGesture {
             // "deal" cards
             for card in game.cards {
@@ -219,10 +219,10 @@ struct CardView: View {
 
 
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        let game = EmojiMemoryGame()
-        game.choose(game.cards.first!)
-        return EmojiMemoryGameView(game: game)
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let game = EmojiMemoryGame()
+//        game.choose(game.cards.first!)
+//        return EmojiMemoryGameView(game: game)
+//    }
+//}

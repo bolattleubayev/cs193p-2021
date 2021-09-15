@@ -7,16 +7,18 @@
 
 import Foundation
 
-struct Theme {
+struct Theme: Identifiable, Codable, Hashable {
     var name: String
     var emojis: [String]
     var numberOfPairs: Int
     var color: String
+    var id: Int
     
-    init(name: String, emojis: [String], numberOfPairs: Int, color: String) {
+    init(name: String, emojis: [String], color: String, id: Int) {
         self.name = name
         self.emojis = Array(Set(emojis)).shuffled()
-        self.numberOfPairs = min(numberOfPairs, self.emojis.count)
+        self.numberOfPairs = self.emojis.count
         self.color = color
+        self.id = id
     }
 }

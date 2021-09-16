@@ -10,6 +10,10 @@ import SwiftUI
 struct MemoryGameManager: View {
     @EnvironmentObject var store: ThemeStore
     
+    @State private var games: Dictionary<Int, EmojiMemoryGame> = [:]
+    @State private var themeToEdit: Theme?
+    @State private var showingThemeEditorPopover = false
+    
     // a Binding to a PresentationMode
     // which lets us dismiss() ourselves if we are isPresented
     @Environment(\.presentationMode) var presentationMode
@@ -22,66 +26,74 @@ struct MemoryGameManager: View {
         NavigationView {
             List {
                 ForEach(store.themes) { theme in
-                    // tapping on this row in the List will navigate to a PaletteEditor
-                    // (not subscripting by the Identifiable)
-                    // (see the subscript added to RangeReplaceableCollection in UtilityExtensiosn)
-                    NavigationLink(destination: EmojiMemoryGameView(game: EmojiMemoryGame(theme: store.themes[theme]))) {
+                    NavigationLink(destination: EmojiMemoryGameView(game: getGame(theme: theme))) {
                         VStack(alignment: .leading) {
                             Text(theme.name)
+//                                .foregroundColor(Color(rgbaColor: theme.color))
                             Text(theme.emojis.compactMap { $0 as String }.joined())
                         }
                         .gesture(editMode == .active ? tap : nil)
                     }
-                    
-//                    NavigationLink(destination: PaletteEditor(palette: $store.palettes[palette])) {
-//                        VStack(alignment: .leading) {
-//                            Text(palette.name)
-//                            Text(palette.emojis)
-//                        }
-//                        // tapping when NOT in editMode will follow the NavigationLink
-//                        // (that's why gesture is set to nil in that case)
-//                        .gesture(editMode == .active ? tap : nil)
-//                    }
-                    
                 }
-                // teach the ForEach how to delete items
-                // at the indices in indexSet from its array
                 .onDelete { indexSet in
                     store.themes.remove(atOffsets: indexSet)
                 }
-                // teach the ForEach how to move items
-                // at the indices in indexSet to a newOffset in its array
                 .onMove { indexSet, newOffset in
                     store.themes.move(fromOffsets: indexSet, toOffset: newOffset)
                 }
             }
-            .navigationTitle("Manage Palettes")
+            .navigationTitle("Manage Themes")
             .navigationBarTitleDisplayMode(.inline)
-            // add an EditButton on the trailing side of our NavigationView
-            // and a Close button on the leading side
-            // notice we are adding this .toolbar to the List
-            // (not to the NavigationView)
-            // (NavigationView looks at the View it is currently showing for toolbar info)
-            // (ditto title and titledisplaymode above)
             .toolbar {
                 ToolbarItem { EditButton() }
                 ToolbarItem(placement: .navigationBarLeading) {
-                    if presentationMode.wrappedValue.isPresented,
-                       UIDevice.current.userInterfaceIdiom != .pad {
-                        Button("Close") {
-                            presentationMode.wrappedValue.dismiss()
-                        }
+                    Button(action:{
+                        // TODO: Create new theme
+                    }) {
+                        Image(systemName: "plus")
                     }
                 }
             }
-            // see comment for editMode @State above
             .environment(\.editMode, $editMode)
+            .onChange(of: themeToEdit, perform: { _ in
+                updateGames()
+            })
         }
     }
     
     var tap: some Gesture {
         TapGesture().onEnded { }
     }
+    
+    
+    
+    // MARK: - Functions
+    
+    private func getGame(theme: Theme) -> EmojiMemoryGame {
+        if let game = games[theme.id] {
+            return game
+        }
+        else {
+            let game = EmojiMemoryGame(theme: theme)
+            games[theme.id] = game
+            return game
+        }
+    }
+    
+    private func updateGames() {
+        for theme in store.themes {
+            if games[theme.id] == nil {
+                games[theme.id] = EmojiMemoryGame(theme: theme)
+            }
+            else {
+                // Replace old theme with the new one if needed
+                if !(games[theme.id]!.theme == theme) {
+                    games[theme.id]!.theme = theme
+                }
+            }
+        }
+    }
+    
 }
 
 struct MemoryGameManager_Previews: PreviewProvider {

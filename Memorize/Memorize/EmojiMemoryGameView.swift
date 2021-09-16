@@ -77,7 +77,7 @@ struct EmojiMemoryGameView: View {
                     }
             }
         }
-        .foregroundColor(convertStringToColor(word: game.theme.color))
+        .foregroundColor(Color(rgbaColor: game.theme.color))
     }
     
     var deckBody: some View {
@@ -90,7 +90,7 @@ struct EmojiMemoryGameView: View {
             }
         }
         .frame(width: CardConstants.undealtWidth, height: CardConstants.undealtHeight)
-        .foregroundColor(convertStringToColor(word: game.theme.color))
+        .foregroundColor(Color(rgbaColor: game.theme.color))
         .onTapGesture {
             // "deal" cards
             for card in game.cards {
@@ -115,25 +115,6 @@ struct EmojiMemoryGameView: View {
             withAnimation {
                 game.shuffle()
             }
-        }
-    }
-    
-    func convertStringToColor(word: String) -> Color {
-        switch word {
-        case "red":
-            return Color.red
-        case "blue":
-            return Color.blue
-        case "orange":
-            return Color.orange
-        case "yellow":
-            return Color.yellow
-        case "green":
-            return Color.green
-        case "black":
-            return Color.black
-        default:
-            return Color.gray
         }
     }
     

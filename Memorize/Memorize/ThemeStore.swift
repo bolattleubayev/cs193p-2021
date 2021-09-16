@@ -36,22 +36,22 @@ class ThemeStore: ObservableObject {
         restoreFromUserDefaults()
         if themes.isEmpty {
             insertTheme(named: "vehicles",
-                  emojis: ["🚲", "🚂", "🚁", "🚜", "🚕", "🏎", "🚑", "🚓", "🚒", "✈️", "🚀", "⛵️", "🛸", "🛶", "🚌", "🏍", "🛺", "🚠", "🛵", "🚗", "🚚", "🚇", "🛻", "🚝"], color: "red")
+                        emojis: ["🚲", "🚂", "🚁", "🚜", "🚕", "🏎", "🚑", "🚓", "🚒", "✈️", "🚀", "⛵️", "🛸", "🛶", "🚌", "🏍", "🛺", "🚠", "🛵", "🚗", "🚚", "🚇", "🛻", "🚝"], color: Color.red)
             insertTheme(named: "animals",
                   emojis: ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵", "🐔", "🐧", "🐦", "🐤", "🐥", "🦄", "🐴", "🐺"],
-                  color: "blue")
+                  color: Color.blue)
             insertTheme(named: "people",
                   emojis: ["😁", "😂", "😅", "😍", "👨🏻‍⚕️", "👩🏻‍🎤", "👨🏻‍🎓", "🧚🏻‍♀️", "🧛🏻‍♂️", "🧞‍♀️", "🧜🏻‍♀️", "👨🏻‍🚀", "👨🏻‍🚒", "👰🏻‍♀️", "😡", "🥶", "😱", "🤥", "😇", "😜", "😎", "🙄", "🤢", "🤠"],
-                  color: "orange")
+                  color: Color.orange)
             insertTheme(named: "halloween",
                   emojis: ["👻", "🎃", "🎃", "🕷"],
-                  color: "yellow")
+                  color: Color.yellow)
             insertTheme(named: "fruits",
                   emojis: ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍇", "🍓"],
-                  color: "green")
+                  color: Color.green)
             insertTheme(named: "objects",
                   emojis: ["📱", "💻", "🖥", "🖨", "☎️", "📺"],
-                  color: "black")
+                  color: Color.black)
             
         }
     }
@@ -71,9 +71,14 @@ class ThemeStore: ObservableObject {
         return index % themes.count
     }
     
-    func insertTheme(named name: String, emojis: [String]? = nil, color: String, at index: Int = 0) {
+    func createNewTheme() -> Theme? {
+        insertTheme(named: "New Theme", color: Color.gray)
+        return themes.last
+    }
+    
+    func insertTheme(named name: String, emojis: [String]? = nil, color: Color, at index: Int = 0) {
         let unique = (themes.max(by: { $0.id < $1.id })?.id ?? 0) + 1
-        let theme = Theme(name: name, emojis: emojis ?? [""], color: color, id: unique)
+        let theme = Theme(name: name, emojis: emojis ?? [""], color: RGBAColor(color: color), id: unique)
         let safeIndex = min(max(index, 0), themes.count)
         themes.insert(theme, at: safeIndex)
     }

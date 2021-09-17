@@ -13,6 +13,7 @@ struct MemoryGameManager: View {
     @State private var games: Dictionary<Int, EmojiMemoryGame> = [:]
     @State private var themeToEdit: Theme?
     @State private var showingThemeEditorPopover = false
+    @State private var editMode: EditMode = .inactive
     
     // a Binding to a PresentationMode
     // which lets us dismiss() ourselves if we are isPresented
@@ -20,7 +21,7 @@ struct MemoryGameManager: View {
     
     // we inject a Binding to this in the environment for the List and EditButton
     // using the \.editMode in EnvironmentValues
-    @State private var editMode: EditMode = .inactive
+    
     
     var body: some View {
         NavigationView {
@@ -28,11 +29,14 @@ struct MemoryGameManager: View {
                 ForEach(store.themes) { theme in
                     NavigationLink(destination: EmojiMemoryGameView(game: getGame(theme: theme))) {
                         VStack(alignment: .leading) {
-                            Text(theme.name)
+                            Text("\(theme.name): \(theme.emojis.count * 2) cards")
                                 .foregroundColor(Color(rgbaColor: theme.color))
                             Text(theme.emojis.compactMap { $0 as String }.joined())
                         }
                         .gesture(editMode == .active ? navigationLinkTap(theme: theme) : nil)
+                        .popover(item: $themeToEdit) { theme in
+                            ThemeEditor(theme: $store.themes[theme])
+                        }
                     }
                 }
                 .onDelete { indexSet in
@@ -100,7 +104,7 @@ struct MemoryGameManager: View {
 struct MemoryGameManager_Previews: PreviewProvider {
     static var previews: some View {
         MemoryGameManager()
-            .previewDevice("iPhone 11")
+            .previewDevice("iPhone 7")
             .environmentObject(ThemeStore(named: "Preview"))
             .preferredColorScheme(.light)
     }

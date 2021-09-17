@@ -11,11 +11,13 @@ struct ThemeEditor: View {
     
     @Binding var theme: Theme
     @Environment(\.presentationMode) var presentationMode
+    @State private var pickedColor: Color = Color.black
     
     var body: some View {
         NavigationView {
             Form {
                 nameSection
+                colorPicker
                 addEmojisSection
                 removeEmojiSection
             }
@@ -40,6 +42,16 @@ struct ThemeEditor: View {
         Section(header: Text("Name")) {
             TextField("Name", text: $theme.name)
         }
+    }
+    
+    var colorPicker: some View {
+        ColorPicker("Select a color for the theme", selection: $pickedColor)
+            .onChange(of: pickedColor) { value in
+            theme.color = RGBAColor(color: value)
+        }
+            .onAppear {
+                pickedColor = Color(rgbaColor: theme.color)
+            }
     }
     
     @State private var emojisToAdd = ""

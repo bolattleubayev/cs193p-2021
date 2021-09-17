@@ -29,10 +29,10 @@ struct MemoryGameManager: View {
                     NavigationLink(destination: EmojiMemoryGameView(game: getGame(theme: theme))) {
                         VStack(alignment: .leading) {
                             Text(theme.name)
-//                                .foregroundColor(Color(rgbaColor: theme.color))
+                                .foregroundColor(Color(rgbaColor: theme.color))
                             Text(theme.emojis.compactMap { $0 as String }.joined())
                         }
-                        .gesture(editMode == .active ? tap : nil)
+                        .gesture(editMode == .active ? navigationLinkTap(theme: theme) : nil)
                     }
                 }
                 .onDelete { indexSet in
@@ -61,8 +61,10 @@ struct MemoryGameManager: View {
         }
     }
     
-    var tap: some Gesture {
-        TapGesture().onEnded { }
+    private func navigationLinkTap(theme: Theme) -> some Gesture {
+        TapGesture().onEnded {
+            themeToEdit = theme
+        }
     }
     
     
@@ -72,8 +74,7 @@ struct MemoryGameManager: View {
     private func getGame(theme: Theme) -> EmojiMemoryGame {
         if let game = games[theme.id] {
             return game
-        }
-        else {
+        } else {
             let game = EmojiMemoryGame(theme: theme)
             games[theme.id] = game
             return game

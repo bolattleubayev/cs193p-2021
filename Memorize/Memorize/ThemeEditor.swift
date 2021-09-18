@@ -18,6 +18,7 @@ struct ThemeEditor: View {
             Form {
                 nameSection
                 colorPicker
+                numberOfCardsPicker
                 addEmojisSection
                 removeEmojiSection
             }
@@ -41,6 +42,14 @@ struct ThemeEditor: View {
     var nameSection: some View {
         Section(header: Text("Name")) {
             TextField("Name", text: $theme.name)
+        }
+    }
+    
+    var numberOfCardsPicker: some View {
+        HStack {
+            Text("Number of pairs: \(theme.numberOfPairs)")
+            Spacer()
+            Stepper("", value: $theme.numberOfPairs, in: 0...theme.emojis.count)
         }
     }
     

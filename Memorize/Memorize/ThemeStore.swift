@@ -36,21 +36,28 @@ class ThemeStore: ObservableObject {
         restoreFromUserDefaults()
         if themes.isEmpty {
             insertTheme(named: "vehicles",
-                        emojis: ["🚲", "🚂", "🚁", "🚜", "🚕", "🏎", "🚑", "🚓", "🚒", "✈️", "🚀", "⛵️", "🛸", "🛶", "🚌", "🏍", "🛺", "🚠", "🛵", "🚗", "🚚", "🚇", "🛻", "🚝"], color: Color(red: 255.0 / 255.0, green: 59.0 / 255.0, blue: 48.0 / 255.0))
+                        emojis: ["🚲", "🚂", "🚁", "🚜", "🚕", "🏎", "🚑", "🚓", "🚒", "✈️", "🚀", "⛵️", "🛸", "🛶", "🚌", "🏍", "🛺", "🚠", "🛵", "🚗", "🚚", "🚇", "🛻", "🚝"],
+                        numberOfPairsOfCards: 10,
+                        color: Color(red: 255.0 / 255.0, green: 59.0 / 255.0, blue: 48.0 / 255.0))
             insertTheme(named: "animals",
                   emojis: ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵", "🐔", "🐧", "🐦", "🐤", "🐥", "🦄", "🐴", "🐺"],
+                  numberOfPairsOfCards: 11,
                   color: Color(red: 48.0 / 255.0, green: 176.0 / 255.0, blue: 199.0 / 255.0))
             insertTheme(named: "people",
                   emojis: ["😁", "😂", "😅", "😍", "👨🏻‍⚕️", "👩🏻‍🎤", "👨🏻‍🎓", "🧚🏻‍♀️", "🧛🏻‍♂️", "🧞‍♀️", "🧜🏻‍♀️", "👨🏻‍🚀", "👨🏻‍🚒", "👰🏻‍♀️", "😡", "🥶", "😱", "🤥", "😇", "😜", "😎", "🙄", "🤢", "🤠"],
+                  numberOfPairsOfCards: 9,
                   color: Color(red: 255.0 / 255.0, green: 204.0 / 255.0, blue: 199.0 / 255.0))
             insertTheme(named: "halloween",
-                  emojis: ["👻", "🎃", "🎃", "🕷"],
-                  color: Color(red: 255.0 / 255.0, green: 149.0 / 255.0, blue: 0.0 / 255.0))
+                        emojis: ["👻", "🎃", "🎃", "🕷"],
+                        numberOfPairsOfCards: 10,
+                        color: Color(red: 255.0 / 255.0, green: 149.0 / 255.0, blue: 0.0 / 255.0))
             insertTheme(named: "fruits",
                   emojis: ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍇", "🍓"],
+                  numberOfPairsOfCards: 3,
                   color: Color(red: 52.0 / 255.0, green: 199.0 / 255.0, blue: 89.0 / 255.0))
             insertTheme(named: "objects",
                   emojis: ["📱", "💻", "🖥", "🖨", "☎️", "📺"],
+                  numberOfPairsOfCards: 6,
                   color: Color.black)
         }
     }
@@ -71,13 +78,13 @@ class ThemeStore: ObservableObject {
     }
     
     func createNewTheme() -> Theme? {
-        insertTheme(named: "New Theme", color: Color.gray)
-        return themes.last
+        insertTheme(named: "New Theme", numberOfPairsOfCards: 0, color: Color.gray)
+        return themes.first
     }
     
-    func insertTheme(named name: String, emojis: [String]? = nil, color: Color, at index: Int = 0) {
+    func insertTheme(named name: String, emojis: [String]? = nil, numberOfPairsOfCards: Int, color: Color, at index: Int = 0) {
         let unique = (themes.max(by: { $0.id < $1.id })?.id ?? 0) + 1
-        let theme = Theme(name: name, emojis: emojis ?? [""], color: RGBAColor(color: color), id: unique)
+        let theme = Theme(name: name, emojis: emojis ?? [""], numberOfPairs: numberOfPairsOfCards, color: RGBAColor(color: color), id: unique)
         let safeIndex = min(max(index, 0), themes.count)
         themes.insert(theme, at: safeIndex)
     }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MemoryGame<CardContent> where CardContent: Equatable {
+struct MemoryGame<CardContent>: Codable where CardContent: Equatable, CardContent: Codable {
     private(set) var cards: Array<Card>
     private(set) var score: Int
     
@@ -60,7 +60,20 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         score = 0
     }
     
-    struct Card: Identifiable {
+    func json() throws -> Data {
+        return try JSONEncoder().encode(self)
+    }
+    
+    init(json: Data) throws {
+        self = try JSONDecoder().decode(MemoryGame.self, from: json)
+    }
+    
+    init(url: URL) throws {
+        let data = try Data(contentsOf: url)
+        self = try MemoryGame(json: data)
+    }
+    
+    struct Card: Identifiable, Codable {
         var isFaceUp = false {
             didSet {
                 if isFaceUp {

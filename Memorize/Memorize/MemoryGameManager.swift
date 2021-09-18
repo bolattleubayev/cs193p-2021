@@ -29,7 +29,7 @@ struct MemoryGameManager: View {
                 ForEach(store.themes) { theme in
                     NavigationLink(destination: EmojiMemoryGameView(game: getGame(theme: theme))) {
                         VStack(alignment: .leading) {
-                            Text("\(theme.name): \(theme.emojis.count * 2) cards")
+                            Text("\(theme.name): \(theme.numberOfPairs * 2) cards")
                                 .foregroundColor(Color(rgbaColor: theme.color))
                             Text(theme.emojis.compactMap { $0 as String }.joined())
                         }
@@ -53,6 +53,7 @@ struct MemoryGameManager: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action:{
                         // TODO: Create new theme
+                        themeToEdit = store.createNewTheme()
                     }) {
                         Image(systemName: "plus")
                     }

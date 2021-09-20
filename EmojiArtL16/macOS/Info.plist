@@ -4,21 +4,10 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeName</key>
-			<string>EmojiArt</string>
-			<key>LSHandlerRank</key>
-			<string>Owner</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>edu.stanford.cs193p.emojiart</string>
-			</array>
-		</dict>
-	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -31,37 +20,24 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>UIApplicationSceneManifest</key>
-	<dict>
-		<key>UIApplicationSupportsMultipleScenes</key>
-		<true/>
-	</dict>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>UILaunchScreen</key>
-	<dict/>
-	<key>UIRequiredDeviceCapabilities</key>
+	<key>LSMinimumSystemVersion</key>
+	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>CFBundleDocumentTypes</key>
 	<array>
-		<string>armv7</string>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>EmojiArt</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>edu.stanford.cs193p.emojiart</string>
+			</array>
+		</dict>
 	</array>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportsDocumentBrowser</key>
-	<true/>
-	<key>UTExportedTypeDeclarations</key>
+	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>
 			<key>UTTypeConformsTo</key>
@@ -84,9 +60,7 @@
 			</dict>
 		</dict>
 	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>The camera can be used to set the background of an EmojiArt document</string>
-	<key>UTImportedTypeDeclarations</key>
+	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
 			<key>UTTypeConformsTo</key>

@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// L16 Moved to iOS-only on multiplatform version
+
 struct PaletteManager: View {
     @EnvironmentObject var store: PaletteStore
     @Environment(\.presentationMode) var presentationMode
@@ -34,7 +36,7 @@ struct PaletteManager: View {
             }
             .navigationTitle("Manage Palettes")
             .navigationBarTitleDisplayMode(.inline)
-            .dismissible { presentationMode.wrappedValue.dismiss() }
+            .dismissable { presentationMode.wrappedValue.dismiss() }
             .toolbar {
                 ToolbarItem { EditButton() }
             }

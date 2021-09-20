@@ -11,12 +11,8 @@ import SwiftUI
 struct EmojiArtDocumentView: View {
     @ObservedObject var document: EmojiArtDocument
     
-    // L14 get our UndoManager from our @Environment
-    // L14 we then pass it into all the Intent functions we call
-    // L14 since our ViewModel is the one who actually implements undo
     @Environment(\.undoManager) var undoManager
     
-    // L14 scale the size of the emojis in our palette to the user's font size preference
     @ScaledMetric var defaultEmojiFontSize: CGFloat = 40
     
     var body: some View {
@@ -30,6 +26,8 @@ struct EmojiArtDocumentView: View {
         GeometryReader { geometry in
             ZStack {
                 Color.white
+                // L15 don't need this as an .overlay anymore
+                // L15 we explicitly position it in the ZStack
                 OptionalImage(uiImage: document.backgroundImage)
                     .scaleEffect(zoomScale)
                     .position(convertFromEmojiCoordinates((0,0), in: geometry))
@@ -46,12 +44,11 @@ struct EmojiArtDocumentView: View {
                 }
             }
             .clipped()
-            .onDrop(of: [.plainText,.url,.image], isTargeted: nil) { providers, location in
+            .onDrop(of: [.utf8PlainText,.url,.image], isTargeted: nil) { providers, location in
                 drop(providers: providers, at: location, in: geometry)
             }
             .gesture(panGesture().simultaneously(with: zoomGesture()))
             .alert(item: $alertToShow) { alertToShow in
-                // return Alert
                 alertToShow.alert()
             }
             .onChange(of: document.backgroundImageFetchStatus) { status in
@@ -63,26 +60,34 @@ struct EmojiArtDocumentView: View {
                 }
             }
             .onReceive(document.$backgroundImage) { image in
-                if autozoom { // L14 only "auto zoom" when drag and drop happens
+                if autozoom {
                     zoomToFit(image, in: geometry.size)
                 }
             }
-            // L14 simple undo UI just to demonstrate undo working
-            // L14 see UndoButton in UtilityViews.swift
+            // L15 added background-setting and undo/redo operations to the navigation toolbar
+            // L15 but since only one button can appear there in .compact horizontal settings
+            // L15 we use .compactableToolbar to turn it into a single button with context menu in that case
             .compactableToolbar {
+                // L15 add background-setting via pasteboard
+                // L15 especially useful on iPhone since no drag-and-drop there
                 AnimatedActionButton(title: "Paste Background", systemImage: "doc.on.clipboard") {
                     pasteBackground()
                 }
+                // L15 add background-setting via taking a photo with the camera
                 if Camera.isAvailable {
                     AnimatedActionButton(title: "Take Photo", systemImage: "camera") {
                         backgroundPicker = .camera
                     }
                 }
+                // L15 add background-setting by choosing a photo from the user's photo library
                 if PhotoLibrary.isAvailable {
                     AnimatedActionButton(title: "Search Photos", systemImage: "photo") {
                         backgroundPicker = .library
                     }
                 }
+                // L15 unrolled undo and redo from context menu into toolbar
+                // L16 don't need undo and redo buttons on macOS because we have an Edit menu
+                #if os(iOS)
                 if let undoManager = undoManager {
                     if undoManager.canUndo {
                         AnimatedActionButton(title: undoManager.undoActionName, systemImage: "arrow.uturn.backward") {
@@ -95,7 +100,10 @@ struct EmojiArtDocumentView: View {
                         }
                     }
                 }
+                #endif
             }
+            // L15 puts up a sheet to show either the camera or photo library
+            // L15 see Camera.swift and PhotoLibrary.swift
             .sheet(item: $backgroundPicker) { pickerType in
                 switch pickerType {
                 case .camera: Camera(handlePickedImage: { image in handlePickedBackgroundImage(image) })
@@ -105,27 +113,31 @@ struct EmojiArtDocumentView: View {
         }
     }
     
+    // L15 @State which controls whether the camera or photo-library sheet (or neither) is up
+    @State private var backgroundPicker: BackgroundPickerType?
+    
+    // L15 enum to control which photo-picking sheet to show
+    enum BackgroundPickerType: Identifiable {
+        case camera
+        case library
+        var id: BackgroundPickerType { self }
+    }
+    
+    // L15 handler for an image from camera or photo library
     private func handlePickedBackgroundImage(_ image: UIImage?) {
         autozoom = true
-        if let imageData = image?.jpegData(compressionQuality: 1.0) {
+        if let imageData = image?.imageData {
             document.setBackground(.imageData(imageData), undoManager: undoManager)
         }
         backgroundPicker = nil
     }
     
-    @State private var backgroundPicker: BackgroundPickerType?
-    
-    enum BackgroundPickerType: Identifiable {
-        case camera
-        case library
-        var id: BackgroundPickerType { self } // making itself identifier because enums are discrete values
-    }
-    
+    // L15 set the background from whatever's in the pasteboard
     private func pasteBackground() {
         autozoom = true
-        if let imageData = UIPasteboard.general.image?.jpegData(compressionQuality: 1.0) {
+        if let imageData = Pasteboard.imageData { // L16 made cross-platform
             document.setBackground(.imageData(imageData), undoManager: undoManager)
-        } else if let url = UIPasteboard.general.url?.imageURL {
+        } else if let url = Pasteboard.imageURL { // L16 made cross-platform
             document.setBackground(.url(url), undoManager: undoManager)
         } else {
             alertToShow = IdentifiableAlert(
@@ -135,8 +147,6 @@ struct EmojiArtDocumentView: View {
         }
     }
     
-    // L14 only "auto zoom" when drag and drop happens
-    // L14 so that @SceneStorage can restore our zoom/pan settings
     @State private var autozoom = false
     
     @State private var alertToShow: IdentifiableAlert?
@@ -155,19 +165,22 @@ struct EmojiArtDocumentView: View {
     
     private func drop(providers: [NSItemProvider], at location: CGPoint, in geometry: GeometryProxy) -> Bool {
         var found = providers.loadObjects(ofType: URL.self) { url in
-            autozoom = true // L14 only "auto zoom" when drag and drop happens
-            // L14 pass undo manager to Intent functions
+            autozoom = true
             document.setBackground(.url(url.imageURL), undoManager: undoManager)
         }
+        // L16 NSImage does not have an NSItemProvider
+        // L16 TODO: figure out a way to drop an NSImage on macOS?
+        // L16 (still doable via URL code above for now)
+        #if os(iOS)
         if !found {
             found = providers.loadObjects(ofType: UIImage.self) { image in
                 if let data = image.jpegData(compressionQuality: 1.0) {
-                    autozoom = true // L14 only "auto zoom" when drag and drop happens
-                    // L14 pass undo manager to Intent functions
+                    autozoom = true
                     document.setBackground(.imageData(data), undoManager: undoManager)
                 }
             }
         }
+        #endif
         if !found {
             found = providers.loadObjects(ofType: String.self) { string in
                 if let emoji = string.first, emoji.isEmoji {
@@ -175,7 +188,6 @@ struct EmojiArtDocumentView: View {
                         String(emoji),
                         at: convertToEmojiCoordinates(location, in: geometry),
                         size: defaultEmojiFontSize / zoomScale,
-                        // L14 pass undo manager to Intent functions
                         undoManager: undoManager
                     )
                 }
@@ -213,7 +225,6 @@ struct EmojiArtDocumentView: View {
     
     // MARK: - Zooming
     
-    // L14 remember our zoom scale on a per-scene basis
     @SceneStorage("EmojiArtDocumentView.steadyStateZoomScale")
     private var steadyStateZoomScale: CGFloat = 1
     @GestureState private var gestureZoomScale: CGFloat = 1
@@ -252,7 +263,6 @@ struct EmojiArtDocumentView: View {
     
     // MARK: - Panning
     
-    // L14 remember our pan position on a per-scene basis
     @SceneStorage("EmojiArtDocumentView.steadyStatePanOffset")
     private var steadyStatePanOffset: CGSize = CGSize.zero
     @GestureState private var gesturePanOffset: CGSize = CGSize.zero

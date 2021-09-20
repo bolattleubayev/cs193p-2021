@@ -7,15 +7,14 @@
 
 import SwiftUI
 
-// L12 the main View of the Palette-choosing MVVM at the bottom of the screen
-
 struct PaletteChooser: View {
     var emojiFontSize: CGFloat = 40
     var emojiFont: Font { .system(size: emojiFontSize) }
     
     @EnvironmentObject var store: PaletteStore
     
-    @SceneStorage("PaletteChooser.chosenPaletteIndex") private var chosenPaletteIndex = 0
+    @SceneStorage("PaletteChooser.chosenPaletteIndex")
+    private var chosenPaletteIndex = 0
     
     var body: some View {
         HStack {
@@ -57,10 +56,20 @@ struct PaletteChooser: View {
         gotoMenu
     }
     
-//    @State private var editing = false
-    @State private var managing = false
-    @State private var paletteToEdit: Palette?
-        
+    var gotoMenu: some View {
+        Menu {
+            ForEach (store.palettes) { palette in
+                AnimatedActionButton(title: palette.name) {
+                    if let index = store.palettes.index(matching: palette) {
+                        chosenPaletteIndex = index
+                    }
+                }
+            }
+        } label: {
+            Label("Go To", systemImage: "text.insert")
+        }
+    }
+    
     func body(for palette: Palette) -> some View {
         HStack {
             Text(palette.name)
@@ -80,19 +89,10 @@ struct PaletteChooser: View {
         }
     }
     
-    var gotoMenu: some View {
-        Menu {
-            ForEach (store.palettes) { palette in
-                AnimatedActionButton(title: palette.name) {
-                    if let index = store.palettes.index(matching: palette) {
-                        chosenPaletteIndex = index
-                    }
-                }
-            }
-        } label: {
-            Label("Go To", systemImage: "text.insert")
-        }
-    }
+//    @State private var editing = false
+    
+    @State private var managing = false
+    @State private var paletteToEdit: Palette?
     
     var rollTransition: AnyTransition {
         AnyTransition.asymmetric(
@@ -115,6 +115,7 @@ struct ScrollingEmojisView: View {
             }
         }
     }
+
 }
 
 struct PaletteChooser_Previews: PreviewProvider {

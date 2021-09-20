@@ -137,36 +137,6 @@ extension UndoManager {
     }
 }
 
-
-extension View {
-    @ViewBuilder
-    func wrappedInNavigationViewToMakeDismissible(_ dismiss: (() -> Void)?) -> some View {
-        if UIDevice.current.userInterfaceIdiom != .pad, let dismiss = dismiss {
-            NavigationView {
-                self
-                    .navigationBarTitleDisplayMode(.inline)
-                    .dismissible(dismiss)
-            }
-            .navigationViewStyle(StackNavigationViewStyle())
-        } else {
-            self
-        }
-    }
-    
-    @ViewBuilder
-    func dismissible(_ dismiss: (() -> Void)?) -> some View {
-        if UIDevice.current.userInterfaceIdiom != .pad, let dismiss = dismiss {
-            self.toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
-                }
-            }
-        } else {
-            self
-        }
-    }
-}
-
 extension View {
     func compactableToolbar<Content>(@ViewBuilder content: () -> Content) -> some View where Content: View {
         self.toolbar {
@@ -176,9 +146,12 @@ extension View {
 }
 
 struct CompactableIntoContextMenu: ViewModifier {
+    #if os(iOS)
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    
     var compact: Bool { horizontalSizeClass == .compact }
+    #else
+    let compact = false
+    #endif
     
     func body(content: Content) -> some View {
         if compact {
